@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{ object.content_title_tag }} {{ shop.name }}</title>
+
+    <link rel="canonical" href="{{ shop.url }}{{ object.url }}" />
+    {% if object.content_meta_description != blank %}
+  	  <meta name="description" content="{{ object.content_meta_description }}" />
+    {% endif %}
+
+    {% if object.content_meta_keywords != blank %}
+  	  <meta name="keywords" content="{{ object.content_meta_keywords }}" />
+    {% endif %}
+
+    {{ 'style.css' | asset_url | stylesheet_tag }}
+
+    <link rel="icon" type="image/png" href="{{ 'favicon.png' | asset_url }}">
+    <link rel="icon" type="image/svg+xml" href="{{ 'favicon.svg' | asset_url }}">
+
+    {{ content_for_header }}
+
+    <script>
+      // force serving via cloudfront
+      var CLOUDFRONT_HOSTNAME = 'demo-speedy.versacommerce.de';
+      if (window.location.hostname !== CLOUDFRONT_HOSTNAME) {
+        window.location = 'https://' + CLOUDFRONT_HOSTNAME;
+      }
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  </head>
+
+  <body data-shop-url="{{ shop.url  }}">
+    <header>
+      <div class="logo"></div>
+      <div class="cart">
+        <div id="toggle-cart">
+          <span class="cart-count value-cart-count"></span>
+        </div>
+
+        <div class="cart-content">
+          <h2 class="cart-header">Einkaufskorb</h2>
+          <ul class="cart-items"></ul>
+          <div class="cart-footer">
+            <div class="cart-total">
+              Summe: <span class="value-cart-total-price"></span>
+            </div>
+
+            <a id="checkout" href="#">Zur Kasse</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="main">
+      <ul class="products">
+        {% for product in collections.katalog.products %}
+          <li id="product-{{ product.id }}" data-price="{{ product.price }}" data-title="{{ product.title }}" data-image-url="{{ product.featured_image | product_img_url: 'medium' }}">
+            <img class="product-image" src="{{ product.featured_image | product_img_url: 'large' }}" alt="{{ product.title }}" />
+            <h4 class="product-title">{{ product.title }}</h4>
+            <span class="product-price">{{ product.price | money }}</span>
+            <button class="add-to-cart" data-product-id="{{ product.id }}">Hinzufügen</button>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <footer>
+      <b>Speedy</b> - Ein super-schnelles Theme für und von <span class="vc-logo">VersaCommerce</span>,
+      der besten Shop-Software aus der Cloud.
+      <p>
+        <span id="load-time"></span>
+      </p>
+    </footer>
+
+    {{ 'lost.min.js' | asset_url | script_tag }}
+    {{ 'shop.js' | asset_url | script_tag }}
+  </body>
+</html>
